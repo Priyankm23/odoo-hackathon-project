@@ -10,7 +10,6 @@ import cookieParser from "cookie-parser"
 import passport from "./controllers/authController.js";
 import { authorize ,restrictTo } from "./middlewares/authMiddleware.js"
 import morgan from "morgan"
-import './controllers/monthlySummary.js';
 import cors from "cors";
 
 const app=express()
