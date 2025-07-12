@@ -1,6 +1,7 @@
 ReWear - Community Clothing Exchange
 Team: Code-Query-Commit
 Team Members:
+
 Member 1: priyankmoradia34@gmail.com
 
 Member 2: utsavbhalani07@gmail.com
