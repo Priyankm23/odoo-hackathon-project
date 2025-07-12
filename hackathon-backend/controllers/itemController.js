@@ -45,7 +45,7 @@ export const createItem = async (req, res) => {
  */
 export const getAllItems = async (req, res) => {
   try {
-    const items = await Item.find({ status: 'pending' })
+    const items = await Item.find({ status: 'available' })
       .populate('uploadedBy', 'name');
 
     res.json(items);

@@ -15,7 +15,13 @@ authRouter.post('/login',signIn)
 
 authRouter.get('/me',protect, (req, res) => {
   // Return the authenticated user info (from token or DB)
-  res.status(200).json({ name: req.user.name, email: req.user.email });
+  if(!req.user) {
+    return res.status(401).json({ message: 'No user found after authentication' });
+  }
+  res.status(200).json({
+    status: 'success', // Optional, but good practice
+    user: req.user // Return the entire user object
+  });
 });
 
 authRouter.get('/google/login',

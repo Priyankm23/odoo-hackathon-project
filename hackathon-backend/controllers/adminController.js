@@ -10,11 +10,14 @@ import User from '../models/User.js';
  */
 export const getPendingItems = async (req, res) => {
   try {
-    const items = await Item.find({ status: 'pending' });
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: 'Fetch failed', error: err.message });
-  }
+      const items = await Item.find({ status: 'pending' })
+        .populate('uploadedBy', 'name email')
+        .sort({ createdAt: -1 });
+  
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
 };
 
 /**

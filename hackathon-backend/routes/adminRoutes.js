@@ -3,7 +3,8 @@ import {
   getPendingItems,
   approveItem,
   rejectItem,
-  getAdminLogs
+  getAdminLogs,
+  getAdminDashboard
 } from '../controllers/adminController.js';
 import { protect, adminOnly } from '../middlewares/authMiddleware.js';
 

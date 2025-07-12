@@ -14,7 +14,7 @@ export const protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).redirect("/login.html");
+    res.status(401).redirect("/");
   }
 };
 

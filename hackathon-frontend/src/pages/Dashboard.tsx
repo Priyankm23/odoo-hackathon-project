@@ -1,179 +1,356 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import {
-  LogOut,
-  User,
-  BarChart3,
-  Users,
-  TrendingUp,
-  Activity,
-  Clock,
-  BadgeCheck,
-  AlertCircle
-} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Plus, Package, RefreshCw, Star, Clock, CheckCircle, XCircle, ShoppingBag } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-interface Stats {
-  total: number;
-  active: number;
-  expired: number;
-  cancelled: number;
-  revenue: number;
-  upcomingRenewals: number;
-  byCategory: { _id: string; count: number }[];
-  byFrequency: { _id: string; count: number }[];
+interface Item {
+  _id: string;
+  title: string;
+  images: string[];
+  status: string;
+  createdAt: string;
+}
+
+interface SwapRequest {
+  _id: string;
+  item: {
+    _id: string;
+    title: string;
+    images: string[];
+  };
+  requester?: {
+    name: string;
+  };
+  owner?: {
+    name: string;
+  };
+  status: string;
+  createdAt: string;
+}
+
+interface Redemption {
+  _id: string;
+  item: {
+    _id: string;
+    title: string;
+    images: string[];
+  };
+  pointsUsed: number;
+  createdAt: string;
+}
+
+interface SwapData {
+  sent: SwapRequest[];
+  received: SwapRequest[];
 }
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { user } = useAuth();
+  const [myItems, setMyItems] = useState<Item[]>([]);
+  const [swaps, setSwaps] = useState<SwapData>({ sent: [], received: [] });
+  const [redemptions, setRedemptions] = useState<Redemption[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/v1/data/analysis', {
-        credentials: 'include',
-      });
+      const [itemsRes, swapsRes, redemptionsRes] = await Promise.all([
+        fetch('http://localhost:5000/api/v1/items/user/my-items', {
+          credentials: 'include'
+        }),
+        fetch('http://localhost:5000/api/v1/swaps/user/my-swaps', {
+          credentials: 'include'
+        }),
+        fetch('http://localhost:5000/api/v1/redeem/user/my-redeems', {
+          credentials: 'include'
+        })
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data.stats);
-      } else {
-        setError('Failed to fetch analytics');
+      if (itemsRes.ok) {
+        const items = await itemsRes.json();
+        setMyItems(items);
       }
-    } catch (err) {
-      console.error(err);
-      setError('Server error while fetching analytics');
+
+      if (swapsRes.ok) {
+        const swapData = await swapsRes.json();
+        setSwaps(swapData);
+      }
+
+      if (redemptionsRes.ok) {
+        const redemptionData = await redemptionsRes.json();
+        setRedemptions(redemptionData);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleSwapResponse = async (swapId: string, status: 'accepted' | 'rejected') => {
+    try {
+      const response = await fetch(`/api/v1/swaps/${swapId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status })
+      });
+
+      if (response.ok) {
+        fetchDashboardData(); // Refresh data
+      }
+    } catch (error) {
+      console.error('Error updating swap status:', error);
+    }
   };
 
-  if (isLoading) {
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case 'accepted':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'rejected':
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'available':
+        return 'text-green-600 bg-green-100';
+      case 'swapped':
+        return 'text-blue-600 bg-blue-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user?.name}!</h1>
+          <p className="text-gray-600 mt-2">Manage your items and track your swapping activity</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <div className="ml-3">
-                <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+              <Star className="h-8 w-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Points Balance</p>
+                <p className="text-2xl font-bold text-gray-900">{user?.points || 0}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-gray-600" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  {user?.name || 'User'}
-                </span>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <Package className="h-8 w-8 text-blue-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">My Items</p>
+                <p className="text-2xl font-bold text-gray-900">{myItems.length}</p>
               </div>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </button>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <RefreshCw className="h-8 w-8 text-purple-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Active Swaps</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {swaps.sent.filter(s => s.status === 'pending').length + 
+                   swaps.received.filter(s => s.status === 'pending').length}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <ShoppingBag className="h-8 w-8 text-orange-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Redeemed Items</p>
+                <p className="text-2xl font-bold text-gray-900">{redemptions.length}</p>
+              </div>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Main */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome back, {user?.name}!
-            </h2>
-            <p className="text-gray-600">
-              Here’s an overview of subscription analytics.
-            </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* My Items */}
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">My Items</h2>
+                <Link 
+                  to="/add-item"
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors inline-flex items-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Item
+                </Link>
+              </div>
+            </div>
+            <div className="p-6">
+              {myItems.length === 0 ? (
+                <div className="text-center py-8">
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No items yet. Start by adding your first item!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {myItems.slice(0, 5).map((item) => (
+                    <div key={item._id} className="flex items-center space-x-4">
+                      <img 
+                        src={item.images[0]} 
+                        alt={item.title}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{item.title}</h3>
+                        <p className="text-sm text-gray-500">
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {error && (
-            <div className="bg-red-100 text-red-700 p-4 rounded mb-4">{error}</div>
-          )}
+          {/* Swap Requests */}
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Recent Swap Activity</h2>
+            </div>
+            <div className="p-6">
+              {swaps.received.length === 0 && swaps.sent.length === 0 ? (
+                <div className="text-center py-8">
+                  <RefreshCw className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No swap activity yet. Start browsing items!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Received Requests */}
+                  {swaps.received.slice(0, 3).map((swap) => (
+                    <div key={swap._id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <img 
+                            src={swap.item.images[0]} 
+                            alt={swap.item.title}
+                            className="w-10 h-10 rounded-lg object-cover"
+                          />
+                          <div>
+                            <p className="font-medium text-gray-900">{swap.item.title}</p>
+                            <p className="text-sm text-gray-500">
+                              Request from {swap.requester?.name}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(swap.status)}
+                          {swap.status === 'pending' && (
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleSwapResponse(swap._id, 'accepted')}
+                                className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => handleSwapResponse(swap._id, 'rejected')}
+                                className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                              >
+                                Decline
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            <StatCard icon={<Users className="text-blue-600" />} label="Total Subscriptions" value={stats?.total} />
-            <StatCard icon={<BadgeCheck className="text-green-600" />} label="Active Subscriptions" value={stats?.active} />
-            <StatCard icon={<AlertCircle className="text-red-500" />} label="Expired Subscriptions" value={stats?.expired} />
-            <StatCard icon={<TrendingUp className="text-purple-600" />} label="Revenue (INR)" value={stats?.revenue} />
-            <StatCard icon={<Clock className="text-orange-500" />} label="Upcoming Renewals (7d)" value={stats?.upcomingRenewals} />
-          </div>
-
-          {/* Category Breakdown */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Subscriptions by Category</h3>
-            {stats?.byCategory?.length > 0 ? (
-              <ul className="space-y-2">
-                {stats.byCategory.map((cat) => (
-                  <li key={cat._id} className="text-sm text-gray-700">
-                    {cat._id.charAt(0).toUpperCase() + cat._id.slice(1)} – {cat.count}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-500">No data.</p>
-            )}
-          </div>
-
-          {/* Frequency Breakdown */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Subscriptions by Frequency</h3>
-            {stats?.byFrequency?.length > 0 ? (
-              <ul className="space-y-2">
-                {stats.byFrequency.map((freq) => (
-                  <li key={freq._id} className="text-sm text-gray-700">
-                    {freq._id.toUpperCase()} – {freq.count}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-500">No data.</p>
-            )}
+                  {/* Sent Requests */}
+                  {swaps.sent.slice(0, 2).map((swap) => (
+                    <div key={swap._id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <img 
+                            src={swap.item.images[0]} 
+                            alt={swap.item.title}
+                            className="w-10 h-10 rounded-lg object-cover"
+                          />
+                          <div>
+                            <p className="font-medium text-gray-900">{swap.item.title}</p>
+                            <p className="text-sm text-gray-500">
+                              Your request to {swap.owner?.name}
+                            </p>
+                          </div>
+                        </div>
+                        {getStatusIcon(swap.status)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </main>
+
+        {/* Redeemed Items Section */}
+        {redemptions.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">My Redeemed Items</h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {redemptions.map((redemption) => (
+                  <div key={redemption._id} className="border border-gray-200 rounded-lg p-4">
+                    <img 
+                      src={redemption.item.images[0]} 
+                      alt={redemption.item.title}
+                      className="w-full h-32 object-cover rounded-lg mb-3"
+                    />
+                    <h3 className="font-medium text-gray-900 mb-1">{redemption.item.title}</h3>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>{redemption.pointsUsed} points used</span>
+                      <span>{new Date(redemption.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
-
-const StatCard = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | string | undefined }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6 flex items-center">
-    <div className="w-10 h-10 mr-4 rounded-full bg-gray-100 flex items-center justify-center">
-      {icon}
-    </div>
-    <div>
-      <div className="text-sm text-gray-500">{label}</div>
-      <div className="text-xl font-bold text-gray-900">{value ?? '-'}</div>
-    </div>
-  </div>
-);
 
 export default Dashboard;
