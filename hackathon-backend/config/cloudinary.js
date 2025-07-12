@@ -9,7 +9,6 @@ cloudinary.config({
   api_secret: CLOUDINARY_SECRET,
 });
 
-console.log('Cloudinary config:', cloudinary.config());
 
 const storage = new CloudinaryStorage({
   cloudinary,

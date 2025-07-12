@@ -4,9 +4,10 @@ import authRouter from "./routes/authRoutes.js"
 import workflowRouter from "./routes/workflowRoute.js"
 
 import itemRouter from './routes/itemRoutes.js';
-// import swapRouter from './routes/swapRoutes.js';
-// import redeemRouter from './routes/redeemRoutes.js';
-// import adminRouter from './routes/adminRoutes.js';
+import dashboardRouter from "./routes/dashboardRoutes.js";
+import swapRouter from './routes/swapRoutes.js';
+import redeemRouter from './routes/redeemRoutes.js';
+import adminRouter from './routes/adminRoutes.js';
 
 import connectToDatabase from './config/dbConnection.js'
 import errorMiddleware from "./middlewares/errorMiddleware.js"
@@ -30,9 +31,10 @@ app.use(cors({
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/workflows',workflowRouter);
 app.use('/api/v1/items', itemRouter);
-// app.use('/api/swaps', swapRouter);
-// app.use('/api/redeem', redeemRouter);
-// app.use('/api/admin', adminRouter);
+app.use('/api/v1/swaps', swapRouter);
+app.use('/api/v1/dashboard', dashboardRouter);
+app.use('/api/redeem', redeemRouter);
+app.use('/api/v1/admin', adminRouter);
 
 app.use(errorMiddleware);
 

@@ -2,7 +2,7 @@ import Item from '../models/Item.js';
 
 /**
  * @desc Create a new clothing item
- * @route POST /api/items
+ * @route POST /api/v1/items
  * @access Private
  */
 export const createItem = async (req, res) => {
@@ -40,12 +40,12 @@ export const createItem = async (req, res) => {
 
 /**
  * @desc Get all approved clothing items
- * @route GET /api/items
+ * @route GET /api/v1/items
  * @access Public
  */
 export const getAllItems = async (req, res) => {
   try {
-    const items = await Item.find({ status: 'available' })
+    const items = await Item.find({ status: 'pending' })
       .populate('uploadedBy', 'name');
 
     res.json(items);
@@ -56,7 +56,7 @@ export const getAllItems = async (req, res) => {
 
 /**
  * @desc Get item by ID
- * @route GET /api/items/:id
+ * @route GET /api/v1/items/:id
  * @access Public
  */
 export const getItemById = async (req, res) => {
