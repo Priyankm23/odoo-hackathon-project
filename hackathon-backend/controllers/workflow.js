@@ -2,7 +2,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { serve } = require("@upstash/workflow/express");
 
-import User from "../models/userSchema.js";
+import User from "../models/User.js";
 import { sendWelcomeEmail } from "../utils/sendWelcomeEmails.js";
 
 export const sendWelcome = serve(async (context) => {

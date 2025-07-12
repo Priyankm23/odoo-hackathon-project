@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import passport from "passport";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import {SERVER_URL} from "../config/env.js"
-import User from "../models/userSchema.js";
+import User from "../models/User.js";
 import { JWT_EXPIRES_IN, JWT_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET } from "../config/env.js";
 import { workflowClient} from "../config/upstash.js";
 

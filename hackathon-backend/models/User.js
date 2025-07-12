@@ -21,10 +21,8 @@ const userSchema = new mongoose.Schema({
         required:[true,'Password is required'],
         minLength:6 
    },
-   role:{
-         type:String,
-         default:'NORMAL' 
-   }
+   points: { type: Number, default: 0 },
+   role: { type: String, enum: ['user', 'admin'], default: 'user' }
 },{timestamps:true});
 
 

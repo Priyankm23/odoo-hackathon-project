@@ -4,7 +4,7 @@ import {
     signIn,
     signUp
 } from "../controllers/authController.js"
-import {authorize} from "../middlewares/authMiddleware.js";
+import {protect} from "../middlewares/authMiddleware.js";
 
 const authRouter=Router();
 
@@ -13,7 +13,7 @@ authRouter.post('/register',signUp)
 
 authRouter.post('/login',signIn)
 
-authRouter.get('/me',authorize, (req, res) => {
+authRouter.get('/me',protect, (req, res) => {
   // Return the authenticated user info (from token or DB)
   res.status(200).json({ name: req.user.name, email: req.user.email });
 });

@@ -1,16 +1,20 @@
 import express, { urlencoded } from "express"
 import {PORT} from "./config/env.js"
-import authRouter from "./routes/authRoute.js"
-import userRouter from "./routes/userRoute.js"
+import authRouter from "./routes/authRoutes.js"
 import workflowRouter from "./routes/workflowRoute.js"
-import dataRouter from "./routes/mockRoute.js"
+
+import itemRouter from './routes/itemRoutes.js';
+// import swapRouter from './routes/swapRoutes.js';
+// import redeemRouter from './routes/redeemRoutes.js';
+// import adminRouter from './routes/adminRoutes.js';
+
 import connectToDatabase from './config/dbConnection.js'
 import errorMiddleware from "./middlewares/errorMiddleware.js"
 import cookieParser from "cookie-parser"
 import passport from "./controllers/authController.js";
-import { authorize ,restrictTo } from "./middlewares/authMiddleware.js"
 import morgan from "morgan"
 import cors from "cors";
+
 
 const app=express()
 
@@ -24,9 +28,11 @@ app.use(cors({
 }));
 
 app.use('/api/v1/auth',authRouter);
-app.use('/api/v1/users',authorize,restrictTo(["ADMIN"]),userRouter);
 app.use('/api/v1/workflows',workflowRouter);
-app.use('/api/v1/data',dataRouter);
+app.use('/api/v1/items', itemRouter);
+// app.use('/api/swaps', swapRouter);
+// app.use('/api/redeem', redeemRouter);
+// app.use('/api/admin', adminRouter);
 
 app.use(errorMiddleware);
 
