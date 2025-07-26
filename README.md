@@ -17,8 +17,8 @@ By encouraging conscious consumption and reuse, ReWear aims to contribute to **s
 
 - Priyank Moradiya – [priyankmoradia34@gmail.com](mailto:priyankmoradia34@gmail.com)  
 - Utsav Bhalani – [utsavbhalani07@gmail.com](mailto:utsavbhalani07@gmail.com)  
-- Yash Gorasiya – [ysgorasiya510@gmail.com](mailto:ysgorasiya510@gmail.com)  
-- Priyanshi Patel – [priyanshiben35@gmail.com](mailto:priyanshiben35@gmail.com)  
+- Yajush Gorasiya – [ysgorasiya510@gmail.com](mailto:ysgorasiya510@gmail.com)  
+- Priyanshi – [priyanshiben35@gmail.com](mailto:priyanshiben35@gmail.com)  
 
 ---
 
