@@ -24,7 +24,17 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: 'http://localhost:5173', // replace with your frontend origin
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow any localhost origin regardless of port
+    if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 
@@ -33,7 +43,7 @@ app.use('/api/v1/workflows',workflowRouter);
 app.use('/api/v1/items', itemRouter);
 app.use('/api/v1/swaps', swapRouter);
 app.use('/api/v1/dashboard', dashboardRouter);
-app.use('/api/redeem', redeemRouter);
+app.use('/api/v1/redeem', redeemRouter);
 app.use('/api/v1/admin', adminRouter);
 
 app.use(errorMiddleware);

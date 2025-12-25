@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./hackathon-backend
+      dockerfile: Dockerfile
+    container_name: hackathon-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./hackathon-backend/.env
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./hackathon-frontend
+      dockerfile: Dockerfile
+    container_name: hackathon-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -162,21 +162,22 @@ const ItemDetail: React.FC = () => {
   const isOwner = user?._id === item.uploadedBy._id;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-gray-50 flex flex-col">
+      <div className="flex-grow py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <button
           onClick={() => navigate('/items')}
-          className="flex items-center text-green-600 hover:text-green-700 mb-6"
+          className="flex items-center text-green-600 hover:text-green-700 mb-8 bg-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Items
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          <span className="font-medium">Back to Items</span>
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="aspect-square bg-white rounded-lg overflow-hidden">
+            <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-xl border border-green-100">
               <img 
                 src={item.images[selectedImage]}
                 alt={item.title}
@@ -185,13 +186,13 @@ const ItemDetail: React.FC = () => {
             </div>
             
             {item.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-3">
                 {item.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-green-600' : 'border-gray-200'
+                    className={`aspect-square rounded-xl overflow-hidden border-3 transition-all transform hover:scale-105 ${
+                      selectedImage === index ? 'border-green-600 shadow-lg ring-2 ring-green-200' : 'border-gray-200 hover:border-green-300'
                     }`}
                   >
                     <img 
@@ -207,15 +208,15 @@ const ItemDetail: React.FC = () => {
 
           {/* Item Details */}
           <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">{item.title}</h1>
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-green-100">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{item.title}</h1>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-red-500">
-                    <Heart className="h-5 w-5" />
+                  <button className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                    <Heart className="h-6 w-6" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-blue-500">
-                    <Share2 className="h-5 w-5" />
+                  <button className="p-3 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all">
+                    <Share2 className="h-6 w-6" />
                   </button>
                 </div>
               </div>
@@ -309,32 +310,81 @@ const ItemDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Star className="h-8 w-8 text-green-500" />
+                <span className="text-2xl font-bold text-white">ReWear</span>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Building a sustainable future through community-driven fashion exchange.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="/items" className="hover:text-green-500 transition-colors">Browse Items</a></li>
+                <li><a href="/register" className="hover:text-green-500 transition-colors">Join Us</a></li>
+                <li><a href="/dashboard" className="hover:text-green-500 transition-colors">Dashboard</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Community</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">About Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">How It Works</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Sustainability</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Support</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 ReWear. All rights reserved. Made with 💚 for a sustainable future.</p>
+          </div>
+        </div>
+      </footer>
 
       {/* Swap Request Modal */}
       {showSwapModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Swap</h3>
-            <p className="text-gray-600 mb-4">
-              Send a message to {item.uploadedBy.name} about swapping for "{item.title}"
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl transform transition-all">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Request Swap</h3>
+            <p className="text-gray-600 mb-6">
+              Send a message to <span className="font-semibold text-green-600">{item.uploadedBy.name}</span> about swapping for "{item.title}"
             </p>
             <textarea
               value={swapMessage}
               onChange={(e) => setSwapMessage(e.target.value)}
               placeholder="Hi! I'm interested in swapping for this item..."
-              className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              className="w-full h-32 p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
             />
-            <div className="flex space-x-3 mt-4">
+            <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowSwapModal(false)}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300"
+                className="flex-1 bg-gray-100 text-gray-800 py-3 px-4 rounded-xl hover:bg-gray-200 font-medium transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSwapRequest}
                 disabled={requesting}
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-4 rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 {requesting ? 'Sending...' : 'Send Request'}
               </button>

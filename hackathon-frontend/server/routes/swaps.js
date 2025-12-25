@@ -51,6 +51,7 @@ router.post('/', protect, async (req, res) => {
 // PATCH /api/v1/swaps/:id/status
 router.patch('/:id/status', protect, async (req, res) => {
   try {
+    console.log()
     const { status } = req.body;
     const swapRequest = await SwapRequest.findById(req.params.id)
       .populate(['item', 'requester', 'owner']);

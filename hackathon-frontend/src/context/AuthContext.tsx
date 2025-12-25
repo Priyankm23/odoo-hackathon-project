@@ -22,7 +22,7 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-type AuthAction = 
+type AuthAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_USER'; payload: User | null }
   | { type: 'LOGOUT' };
@@ -51,18 +51,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkAuth = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const response = await fetch('http://localhost:5000/api/v1/auth/me', {
         credentials: 'include'
       });
-      
+
       if (response.ok) {
-        const user = await response.json();
-        dispatch({ type: 'SET_USER', payload: user });
+        const data = await response.json();
+        dispatch({ type: 'SET_USER', payload: data.user });
       } else {
         dispatch({ type: 'SET_USER', payload: null });
       }
     } catch (error) {
+      console.error("Auth check failed:", error);
       dispatch({ type: 'SET_USER', payload: null });
     }
   };
@@ -80,8 +82,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error(error.message);
     }
 
-    const user = await response.json();
-    dispatch({ type: 'SET_USER', payload: user });
+    const data = await response.json();
+    dispatch({ type: 'SET_USER', payload: data.data });
   };
 
   const register = async (name: string, email: string, password: string) => {
@@ -97,13 +99,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error(error.message);
     }
 
-    const user = await response.json();
-    dispatch({ type: 'SET_USER', payload: user });
+    const data = await response.json();
+    dispatch({ type: 'SET_USER', payload: data.data[0] });
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/v1/auth/logout', {
+      await fetch('http://localhost:5000/api/v1/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });

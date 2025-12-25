@@ -8,37 +8,44 @@ import Item from '../models/Item.js';
  * @access Private
  */
 export const requestSwap = async (req, res) => {
-  const { itemId } = req.body;
-
   try {
-    const item = await Item.findById(itemId);
-    if (!item || item.status !== 'available') {
-      return res.status(400).json({ message: 'Item not available for swap' });
+      const { itemId, message } = req.body;
+  
+      const item = await Item.findById(itemId).populate('uploadedBy');
+      if (!item) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
+  
+      if (item.uploadedBy._id.toString() === req.user._id.toString()) {
+        return res.status(400).json({ message: 'Cannot swap your own item' });
+      }
+  
+      if (item.status !== 'available') {
+        return res.status(400).json({ message: 'Item not available for swap' });
+      }
+  
+      const existingRequest = await SwapRequest.findOne({
+        item: itemId,
+        requester: req.user._id,
+        status: 'pending'
+      });
+  
+      if (existingRequest) {
+        return res.status(400).json({ message: 'Swap request already exists' });
+      }
+  
+      const swapRequest = await SwapRequest.create({
+        item: itemId,
+        requester: req.user._id,
+        owner: item.uploadedBy._id,
+        message
+      });
+  
+      await swapRequest.populate(['item', 'requester', 'owner']);
+      res.status(201).json(swapRequest);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    if (String(item.uploadedBy) === String(req.user._id)) {
-      return res.status(400).json({ message: 'You cannot swap your own item' });
-    }
-
-    const existingSwap = await SwapRequest.findOne({
-      item: itemId,
-      requester: req.user._id,
-      status: 'pending'
-    });
-
-    if (existingSwap) {
-      return res.status(400).json({ message: 'You already requested a swap for this item' });
-    }
-
-    const swap = await SwapRequest.create({
-      item: itemId,
-      requester: req.user._id
-    });
-
-    res.status(201).json({ message: 'Swap requested', swap });
-  } catch (err) {
-    res.status(500).json({ message: 'Swap request failed', error: err.message });
-  }
 };
 
 /**
@@ -47,31 +54,33 @@ export const requestSwap = async (req, res) => {
  * @access Private
  */
 export const updateSwapStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
   try {
-    const swap = await SwapRequest.findById(id).populate('item');
-    if (!swap) return res.status(404).json({ message: 'Swap request not found' });
+    console.log(req.body);
+    const { status } = req.body;
+    const swapRequest = await SwapRequest.findById(req.params.id)
+      .populate(['item', 'requester', 'owner']);
 
-    if (!['accepted', 'rejected'].includes(status)) {
-      return res.status(400).json({ message: 'Invalid status value' });
+    if (!swapRequest) {
+      return res.status(404).json({ message: 'Swap request not found' });
     }
 
-    if (String(swap.item.uploadedBy) !== String(req.user._id) && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Only item owner or admin can respond to this swap request' });
+    if (swapRequest.owner._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
     }
 
-    swap.status = status;
+    swapRequest.status = status;
+    await swapRequest.save();
 
     if (status === 'accepted') {
-      swap.item.status = 'swapped';
-      await swap.item.save();
+      await Item.findByIdAndUpdate(swapRequest.item._id, { status: 'swapped' });
+      
+      // Award points to both users
+      await User.findByIdAndUpdate(swapRequest.owner._id, { $inc: { points: 50 } });
+      await User.findByIdAndUpdate(swapRequest.requester._id, { $inc: { points: 25 } });
     }
 
-    await swap.save();
-    res.json({ message: `Swap ${status}`, swap });
-  } catch (err) {
-    res.status(500).json({ message: 'Swap status update failed', error: err.message });
+    res.json(swapRequest);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

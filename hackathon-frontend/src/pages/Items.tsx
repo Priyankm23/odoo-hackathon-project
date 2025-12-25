@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, Grid, List } from 'lucide-react';
+import { Search, Filter, Grid, List, Shirt } from 'lucide-react';
 import ItemCard from '../components/ItemCard';
 
 interface Item {
@@ -98,26 +98,29 @@ const Items: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-gray-50 flex flex-col">
+      <div className="flex-grow">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Browse Items</h1>
-          <p className="text-gray-600">Discover amazing pre-loved fashion pieces from our community</p>
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 py-16 mb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Discover Unique Fashion</h1>
+            <p className="text-green-50 text-lg max-w-2xl mx-auto">Explore our community's curated collection of pre-loved fashion pieces</p>
+          </div>
         </div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-green-100">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
-                  placeholder="Search items..."
+                  placeholder="Search by title, description, or tags..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 />
               </div>
             </div>
@@ -125,7 +128,7 @@ const Items: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
             >
               <option value="">All Categories</option>
               {categories.map(category => (
@@ -138,7 +141,7 @@ const Items: React.FC = () => {
             <select
               value={selectedSize}
               onChange={(e) => setSelectedSize(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
             >
               <option value="">All Sizes</option>
               {sizes.map(size => (
@@ -149,7 +152,7 @@ const Items: React.FC = () => {
             <select
               value={selectedCondition}
               onChange={(e) => setSelectedCondition(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
             >
               <option value="">All Conditions</option>
               {conditions.map(condition => (
@@ -162,15 +165,17 @@ const Items: React.FC = () => {
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                {filteredItems.length} items found
-              </span>
+              <div className="bg-green-50 px-4 py-2 rounded-lg">
+                <span className="text-sm font-semibold text-green-700">
+                  {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'} found
+                </span>
+              </div>
               {(searchTerm || selectedCategory || selectedSize || selectedCondition) && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-green-600 hover:text-green-700"
+                  className="text-sm text-green-600 hover:text-green-700 font-medium hover:underline"
                 >
-                  Clear filters
+                  Clear all filters
                 </button>
               )}
             </div>
@@ -178,15 +183,15 @@ const Items: React.FC = () => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-green-100 text-green-600' : 'text-gray-400'}`}
+                className={`p-3 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-green-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
-                <Grid className="h-4 w-4" />
+                <Grid className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-green-100 text-green-600' : 'text-gray-400'}`}
+                className={`p-3 rounded-lg transition-all ${viewMode === 'list' ? 'bg-green-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
-                <List className="h-4 w-4" />
+                <List className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -211,6 +216,55 @@ const Items: React.FC = () => {
           </div>
         )}
       </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Filter className="h-8 w-8 text-green-500" />
+                <span className="text-2xl font-bold text-white">ReWear</span>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Building a sustainable future through community-driven fashion exchange.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="/items" className="hover:text-green-500 transition-colors">Browse Items</a></li>
+                <li><a href="/register" className="hover:text-green-500 transition-colors">Join Us</a></li>
+                <li><a href="/dashboard" className="hover:text-green-500 transition-colors">Dashboard</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Community</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">About Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">How It Works</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Sustainability</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Support</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 ReWear. All rights reserved. Made with 💚 for a sustainable future.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -142,55 +142,64 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-gray-50 flex flex-col">
+      <div className="flex-grow py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user?.name}!</h1>
-          <p className="text-gray-600 mt-2">Manage your items and track your swapping activity</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">Welcome back, {user?.name}!</h1>
+          <p className="text-gray-600 text-lg">Manage your items and track your swapping activity</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <Star className="h-8 w-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Points Balance</p>
-                <p className="text-2xl font-bold text-gray-900">{user?.points || 0}</p>
+          <div className="bg-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-green-500 transform hover:-translate-y-1 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Points Balance</p>
+                <p className="text-3xl font-bold text-gray-900">{user?.points || 0}</p>
+              </div>
+              <div className="bg-green-50 p-3 rounded-xl">
+                <Star className="h-8 w-8 text-green-600" />
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <Package className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">My Items</p>
-                <p className="text-2xl font-bold text-gray-900">{myItems.length}</p>
+          <div className="bg-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-blue-500 transform hover:-translate-y-1 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">My Items</p>
+                <p className="text-3xl font-bold text-gray-900">{myItems.length}</p>
+              </div>
+              <div className="bg-blue-50 p-3 rounded-xl">
+                <Package className="h-8 w-8 text-blue-600" />
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <RefreshCw className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Active Swaps</p>
-                <p className="text-2xl font-bold text-gray-900">
+          <div className="bg-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-purple-500 transform hover:-translate-y-1 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Active Swaps</p>
+                <p className="text-3xl font-bold text-gray-900">
                   {swaps.sent.filter(s => s.status === 'pending').length + 
                    swaps.received.filter(s => s.status === 'pending').length}
                 </p>
               </div>
+              <div className="bg-purple-50 p-3 rounded-xl">
+                <RefreshCw className="h-8 w-8 text-purple-600" />
+              </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <ShoppingBag className="h-8 w-8 text-orange-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Redeemed Items</p>
-                <p className="text-2xl font-bold text-gray-900">{redemptions.length}</p>
+          <div className="bg-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-amber-500 transform hover:-translate-y-1 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Redeemed Items</p>
+                <p className="text-3xl font-bold text-gray-900">{redemptions.length}</p>
+              </div>
+              <div className="bg-amber-50 p-3 rounded-xl">
+                <ShoppingBag className="h-8 w-8 text-amber-600" />
               </div>
             </div>
           </div>
@@ -348,8 +357,55 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </div>      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Package className="h-8 w-8 text-green-500" />
+                <span className="text-2xl font-bold text-white">ReWear</span>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Building a sustainable future through community-driven fashion exchange.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="/items" className="hover:text-green-500 transition-colors">Browse Items</a></li>
+                <li><a href="/add-item" className="hover:text-green-500 transition-colors">List Item</a></li>
+                <li><a href="/dashboard" className="hover:text-green-500 transition-colors">Dashboard</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Community</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">About Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">How It Works</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Sustainability</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Support</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-green-500 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-green-500 transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 ReWear. All rights reserved. Made with 💚 for a sustainable future.</p>
+          </div>
+        </div>
+      </footer>    </div>
   );
 };
 

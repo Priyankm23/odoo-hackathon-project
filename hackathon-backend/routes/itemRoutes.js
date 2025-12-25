@@ -2,6 +2,7 @@ import {Router} from 'express';
 import { createItem, getAllItems, getItemById } from '../controllers/itemController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import upload from '../middlewares/upload.js';
+import Item from '../models/Item.js';
 
 const itemRouter = Router();
 
