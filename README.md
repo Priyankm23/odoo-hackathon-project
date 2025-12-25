@@ -1,55 +1,88 @@
-ReWear - Community Clothing Exchange
-Team: Code-Query-Commit
-Team Members:
+# 👕 ReWear – Community Clothing Exchange
 
-Member 1: priyankmoradia34@gmail.com
+A web-based platform to **exchange unused clothes** via direct swaps or a **point-based system** — promoting sustainable fashion and reducing textile waste.
 
-Member 2: utsavbhalani07@gmail.com
+---
 
-Member 3: ysgorasiya510@gmail.com
+## 🚀 Overview
 
-Member 4: priyanshiben35@gmail.com
+ReWear is a community-powered clothing exchange platform built for **ODDO Hackathon** by Team `Code-Query-Commit`.  
+It enables users to list, browse, and exchange wearable garments with others — either via **direct swapping** or using a **points-based redemption system**.
 
-Overview
-Develop ReWear, a web-based platform that enables users to exchange unused clothing through direct swaps or a point-based redemption system. The goal is to promote sustainable fashion and reduce textile waste by encouraging users to reuse wearable garments instead of discarding them. 
+By encouraging conscious consumption and reuse, ReWear aims to contribute to **sustainable fashion** and reduce the environmental footprint of fast fashion.
 
-Features
-User Authentication
-Email/password signup and login 
+---
 
-Landing Page
-Platform introduction 
+## 👥 Team: Code-Query-Commit
 
-Calls-to-action: "Start Swapping", "Browse Items", "List an Item" 
+- Priyank Moradiya – [priyankmoradia34@gmail.com](mailto:priyankmoradia34@gmail.com)  
+- Utsav Bhalani – [utsavbhalani07@gmail.com](mailto:utsavbhalani07@gmail.com)  
+- Yajush Gorasiya – [ysgorasiya510@gmail.com](mailto:ysgorasiya510@gmail.com)  
+- Priyanshi – [priyanshiben35@gmail.com](mailto:priyanshiben35@gmail.com)  
 
-Featured items carousel 
+---
 
-User Dashboard
-Profile details and points balance 
+## 🛠 Tech Stack
 
-Uploaded items overview 
+| Frontend  | Backend | Database | Cloud / Auth |
+|-----------|---------|----------|---------------|
+| React     | Node.js | MongoDB  | Cloudinary    |
+| TypeScript| Express | Mongoose | Google OAuth  |
+| HTML/CSS  | JWT     |          | Multer, CORS  |
 
-Ongoing and completed swaps list 
+---
 
-Item Detail Page
-Image gallery and full item description 
+## 🌟 Key Features
 
-Uploader info 
+### ✅ User Authentication
+- Email/Password Sign-Up and Login
+- Google OAuth for Quick Access
+- JWT-based Session Management
 
-Options: "Swap Request" or "Redeem via Points" 
+### 🏠 Landing Page
+- Introduction to ReWear’s mission
+- CTAs: “Start Swapping”, “Browse Items”, “List an Item”
+- Featured Items Carousel
 
-Item availability status 
+### 👤 User Dashboard
+- Profile Information and Points Balance
+- Uploaded Items Overview
+- View Ongoing and Completed Swaps
 
-Add New Item Page
-Upload images 
+### 📦 Item Detail Page
+- Image Gallery and Full Description
+- Uploader Contact Info
+- “Swap Request” or “Redeem via Points”
+- Availability Indicator
 
-Enter title, description, category, type, size, condition, and tags 
+### ➕ Add New Item
+- Upload Multiple Images (via Multer + Cloudinary)
+- Provide: Title, Description, Category, Size, Type, Condition, Tags
+- Submit for Listing
 
-Submit to list item 
+### 🛡 Admin Role
+- Moderate Listings (Approve/Reject)
+- Remove Spam or Inappropriate Items
+- Lightweight Admin Panel for Oversight
 
-Admin Role
-Moderate and approve/reject item listings 
+---
 
-Remove inappropriate or spam items 
+## 📁 Project Structure (Simplified)
 
-Lightweight admin panel for oversight 
+```bash
+├── client/                 # React Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── ...
+│   └── public/
+├── server/                 # Node.js + Express Backend
+│   ├── controllers/
+│   ├── routes/
+│   ├── models/
+│   ├── middleware/
+│   └── ...
+├── uploads/                # Image Upload Temp Folder
+├── .env                    # Environment Variables
+├── README.md               # You're Here!
